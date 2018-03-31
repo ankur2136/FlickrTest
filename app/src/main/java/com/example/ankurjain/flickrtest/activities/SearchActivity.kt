@@ -37,10 +37,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var detailImageView: ImageView
     private lateinit var detailImageViewContainer: View
+    private var lastQuery = DEFAULT_QUERY_STRING
 
     companion object {
         const val TAG = "SearchActivity"
         const val IMAGES = "images"
+        const val DEFAULT_QUERY_STRING = "dog"
+        const val LAST_QUERY_KEY = "lastQuery"
     }
 
     private val queryCallback = object : Callback<ResponseWrapper> {
@@ -95,11 +98,14 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = searchAdapter
         createApi()
         if (savedInstanceState == null) {
-            loadImagesForQuery("dog")
+            loadImagesForQuery(DEFAULT_QUERY_STRING)
+        } else {
+            hideProgressBar()
         }
     }
 
     private fun loadImagesForQuery(query: String) {
+        lastQuery = query
         searchAdapter.clearItems()
         showProgressBar()
         flickrAPI.getListOfPhotosForQuery("675894853ae8ec6c242fa4c077bcf4a0", query).enqueue(queryCallback)
@@ -153,12 +159,18 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putParcelableArrayList(IMAGES, ArrayList(searchAdapter.getItems()))
+        outState?.putString(LAST_QUERY_KEY, lastQuery)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         val items = savedInstanceState?.getParcelableArrayList<GalleryItem>(IMAGES)
-        searchAdapter.appendItems(items)
+        val lastQuery = savedInstanceState?.getString(LAST_QUERY_KEY) ?: DEFAULT_QUERY_STRING
+        if (items != null && items.isNotEmpty()) {
+            searchAdapter.appendItems(items)
+        } else {
+            loadImagesForQuery(lastQuery)
+        }
     }
 
     override fun onBackPressed() {

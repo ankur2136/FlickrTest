@@ -15,6 +15,7 @@ import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import com.example.ankurjain.flickrtest.R
 import com.example.ankurjain.flickrtest.adapters.SearchAdapter
+import com.example.ankurjain.flickrtest.dto.GalleryItem
 import com.example.ankurjain.flickrtest.dto.ResponseWrapper
 import com.example.ankurjain.flickrtest.network.FlickrAPI
 import com.google.gson.GsonBuilder
@@ -25,6 +26,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 
 class SearchActivity : AppCompatActivity() {
@@ -38,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SearchActivity"
+        const val IMAGES = "images"
     }
 
     private val queryCallback = object : Callback<ResponseWrapper> {
@@ -91,7 +94,9 @@ class SearchActivity : AppCompatActivity() {
         searchAdapter = SearchAdapter(itemCLickListenerInteraction, this)
         recyclerView.adapter = searchAdapter
         createApi()
-        loadImagesForQuery("dog")
+        if (savedInstanceState == null) {
+            loadImagesForQuery("dog")
+        }
     }
 
     private fun loadImagesForQuery(query: String) {
@@ -143,6 +148,17 @@ class SearchActivity : AppCompatActivity() {
     interface IItemCLickListenerInteraction {
         fun onItemClick(url: String)
         fun hideProgressBar()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putParcelableArrayList(IMAGES, ArrayList(searchAdapter.getItems()))
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val items = savedInstanceState?.getParcelableArrayList<GalleryItem>(IMAGES)
+        searchAdapter.appendItems(items)
     }
 
     override fun onBackPressed() {

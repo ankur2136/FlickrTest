@@ -21,6 +21,10 @@ class SearchAdapter (private val interactionListener: SearchActivity.IItemCLickL
         notifyDataSetChanged()
     }
 
+    fun getItems(): List<GalleryItem> {
+        return items
+    }
+
     fun appendItems(newItems: List<GalleryItem>?) {
         if (newItems != null && newItems.isNotEmpty()) {
             items.addAll(newItems)

@@ -1,6 +1,5 @@
 package com.example.ankurjain.flickrtest.activities
 
-import android.app.Dialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.View
-import android.view.Window
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.bumptech.glide.Glide
@@ -35,6 +33,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var flickrAPI: FlickrAPI
     private lateinit var searchAdapter: SearchAdapter
+    private lateinit var detailImageView: ImageView
+    private lateinit var detailImageViewContainer: View
 
     companion object {
         const val TAG = "SearchActivity"
@@ -81,6 +81,11 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         progressBar = findViewById(R.id.search_progress_bar)
         recyclerView = findViewById(R.id.search_recycler_view)
+        detailImageView = findViewById(R.id.detailed_image_view)
+        detailImageViewContainer = findViewById(R.id.detailed_image_view_container)
+        detailImageViewContainer.setOnClickListener {
+            detailImageViewContainer.visibility = View.GONE
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         searchAdapter = SearchAdapter(itemCLickListenerInteraction, this)
@@ -130,17 +135,21 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showImageDetails(url: String) {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.detail_view)
-        val imageView = dialog.findViewById<ImageView>(R.id.detailed_image_view)
-        dialog.show()
-        Glide.with(this).load(url).placeholder(R.drawable.ic_launcher_background).override(300, 300).into(imageView)
+        Glide.with(this).load(url).placeholder(R.drawable.ic_launcher_background).override(300, 300).into(detailImageView)
+        detailImageViewContainer.visibility = View.VISIBLE
     }
 
 
     interface IItemCLickListenerInteraction {
         fun onItemClick(url: String)
         fun hideProgressBar()
+    }
+
+    override fun onBackPressed() {
+        if (detailImageViewContainer.visibility == View.VISIBLE) {
+            detailImageViewContainer.visibility = View.GONE
+        } else {
+            super.onBackPressed()
+        }
     }
 }

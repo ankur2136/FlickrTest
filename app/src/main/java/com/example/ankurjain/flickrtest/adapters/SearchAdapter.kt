@@ -1,16 +1,18 @@
 package com.example.ankurjain.flickrtest.adapters
 
+import android.content.Context
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.example.ankurjain.flickrtest.R
 import com.example.ankurjain.flickrtest.activities.SearchActivity
 import com.example.ankurjain.flickrtest.databinding.ListItemImageViewBinding
 import com.example.ankurjain.flickrtest.dto.GalleryItem
 import com.example.ankurjain.flickrtest.viewmodels.GalleryItemViewModel
 
-class SearchAdapter (val interactionListener: SearchActivity.IItemCLickListenerInteraction) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchAdapter (private val interactionListener: SearchActivity.IItemCLickListenerInteraction, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items: MutableList<GalleryItem> = mutableListOf()
 
@@ -41,13 +43,14 @@ class SearchAdapter (val interactionListener: SearchActivity.IItemCLickListenerI
         holder.bind(items[position])
     }
 
-    inner class ImageViewHolder(binding: ListItemImageViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ImageViewHolder(private val binding: ListItemImageViewBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.viewModel = GalleryItemViewModel()
         }
 
         fun bind(item: GalleryItem) {
-
+            binding.viewModel?.setUrl(item.url)
+            Glide.with(context).load(item.url).into(binding.photoView)
         }
     }
 }

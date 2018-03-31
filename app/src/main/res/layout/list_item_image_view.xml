@@ -12,23 +12,20 @@
     <LinearLayout
         android:id="@+id/photo_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/photo_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
             android:src="@drawable/ic_launcher_background"
             tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/photo_caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@{viewModel.text}"
-            tools:text="Testing" />
     </LinearLayout>
 
 </layout>

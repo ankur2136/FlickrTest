@@ -65,7 +65,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.search_recycler_view)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = SearchAdapter(itemCLickListenerInteraction)
+        recyclerView.adapter = SearchAdapter(itemCLickListenerInteraction, this)
         createApi()
         flickrAPI.getListOfPhotosForQuery("675894853ae8ec6c242fa4c077bcf4a0", "dog").enqueue(queryCallback)
     }

@@ -4,15 +4,15 @@ import android.databinding.BaseObservable
 
 open class GalleryItemViewModel : BaseObservable() {
 
-    var mText: String? = ""
+    private var mUrl: String? = ""
 
-    fun setText(text: String) {
-        mText = text
+    fun setUrl(text: String) {
+        mUrl = text
         notifyChange()
     }
 
-    fun getText(): String? {
-        return mText
+    fun getUrl(): String? {
+        return mUrl
     }
 
 }

@@ -8,19 +8,16 @@ import android.util.Log
 import android.widget.ProgressBar
 import com.example.ankurjain.flickrtest.R
 import com.example.ankurjain.flickrtest.adapters.SearchAdapter
-import com.example.ankurjain.flickrtest.dto.GalleryItem
+import com.example.ankurjain.flickrtest.dto.ResponseWrapper
 import com.example.ankurjain.flickrtest.network.FlickrAPI
-import com.example.ankurjain.flickrtest.network.ListWrapper
 import com.google.gson.GsonBuilder
-import okhttp3.ResponseBody
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-
 
 
 class SearchActivity : AppCompatActivity() {
@@ -33,21 +30,22 @@ class SearchActivity : AppCompatActivity() {
         const val TAG = "SearchActivity"
     }
 
-    private val queryCallback = object : Callback<ListWrapper<GalleryItem>> {
-        override fun onFailure(call: Call<ListWrapper<GalleryItem>>?, t: Throwable?) {
+    private val queryCallback = object : Callback<ResponseWrapper> {
+        override fun onFailure(call: Call<ResponseWrapper>?, t: Throwable?) {
             Log.d(TAG, "failed to call $call")
         }
 
-        override fun onResponse(call: Call<ListWrapper<GalleryItem>>?, response: Response<ListWrapper<GalleryItem>>?) {
+        override fun onResponse(call: Call<ResponseWrapper>?, response: Response<ResponseWrapper>?) {
             Log.d(TAG, response?.body().toString())
             if (response != null) {
                 if (response.isSuccessful) {
-                    val items = response.body()?.photo
+                    val items = response.body()?.photos?.listPhotos
                     val adapter = recyclerView.adapter as SearchAdapter
                     adapter.appendItems(items)
                 }
             }
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,12 +1,16 @@
 package com.example.ankurjain.flickrtest.activities
 
+import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.widget.ImageView
 import android.widget.ProgressBar
+import com.bumptech.glide.Glide
 import com.example.ankurjain.flickrtest.R
 import com.example.ankurjain.flickrtest.adapters.SearchAdapter
 import com.example.ankurjain.flickrtest.dto.ResponseWrapper
@@ -48,9 +52,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private val itemCLickListenerInteraction = object : IItemCLickListenerInteraction{
-        override fun onItemClick(photoId: String) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private val itemCLickListenerInteraction = object : IItemCLickListenerInteraction {
+        override fun onItemClick(url: String) {
+            showImageDetails(url)
         }
 
         override fun hideProgressBar() {
@@ -83,8 +87,18 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
+    private fun showImageDetails(url: String) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.detail_view)
+        val imageView = dialog.findViewById<ImageView>(R.id.detailed_image_view)
+        dialog.show()
+        Glide.with(this).load(url).placeholder(R.drawable.ic_launcher_background).override(300, 300).into(imageView)
+    }
+
+
     interface IItemCLickListenerInteraction {
-        fun onItemClick(photoId: String)
+        fun onItemClick(url: String)
         fun hideProgressBar()
     }
 }

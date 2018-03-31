@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
 import android.widget.ProgressBar
 import com.example.ankurjain.flickrtest.R
 import com.example.ankurjain.flickrtest.adapters.SearchAdapter
@@ -45,7 +46,16 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    private val itemCLickListenerInteraction = object : IItemCLickListenerInteraction{
+        override fun onItemClick(photoId: String) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun hideProgressBar() {
+            progressBar.visibility = View.GONE
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +65,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.search_recycler_view)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = SearchAdapter()
+        recyclerView.adapter = SearchAdapter(itemCLickListenerInteraction)
         createApi()
         flickrAPI.getListOfPhotosForQuery("675894853ae8ec6c242fa4c077bcf4a0", "dog").enqueue(queryCallback)
     }
@@ -70,5 +80,11 @@ class SearchActivity : AppCompatActivity() {
 
         val retroFit = Retrofit.Builder().baseUrl(FlickrAPI.BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).client(httpClient.build()).build()
         flickrAPI = retroFit.create(FlickrAPI::class.java)
+    }
+
+
+    interface IItemCLickListenerInteraction {
+        fun onItemClick(photoId: String)
+        fun hideProgressBar()
     }
 }

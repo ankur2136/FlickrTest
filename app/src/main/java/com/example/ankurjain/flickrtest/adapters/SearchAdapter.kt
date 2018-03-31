@@ -5,11 +5,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.ankurjain.flickrtest.R
+import com.example.ankurjain.flickrtest.activities.SearchActivity
 import com.example.ankurjain.flickrtest.databinding.ListItemImageViewBinding
 import com.example.ankurjain.flickrtest.dto.GalleryItem
 import com.example.ankurjain.flickrtest.viewmodels.GalleryItemViewModel
 
-class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchAdapter (val interactionListener: SearchActivity.IItemCLickListenerInteraction) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items: MutableList<GalleryItem> = mutableListOf()
 
@@ -17,6 +18,10 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (newItems != null && newItems.isNotEmpty()) {
             items.addAll(newItems)
             notifyItemRangeInserted(items.size, newItems.size)
+        }
+
+        if (items.size > 0) {
+            interactionListener.hideProgressBar()
         }
     }
 

@@ -1,11 +1,15 @@
 package com.example.ankurjain.flickrtest.activities
 
 import android.app.Dialog
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
@@ -30,6 +34,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var flickrAPI: FlickrAPI
+    private lateinit var searchAdapter: SearchAdapter
 
     companion object {
         const val TAG = "SearchActivity"
@@ -38,6 +43,7 @@ class SearchActivity : AppCompatActivity() {
     private val queryCallback = object : Callback<ResponseWrapper> {
         override fun onFailure(call: Call<ResponseWrapper>?, t: Throwable?) {
             Log.d(TAG, "failed to call $call")
+            hideProgressBar()
         }
 
         override fun onResponse(call: Call<ResponseWrapper>?, response: Response<ResponseWrapper>?) {
@@ -62,16 +68,31 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun hideProgressBar() {
+    }
+
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         progressBar = findViewById(R.id.search_progress_bar)
         recyclerView = findViewById(R.id.search_recycler_view)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = SearchAdapter(itemCLickListenerInteraction, this)
+        searchAdapter = SearchAdapter(itemCLickListenerInteraction, this)
+        recyclerView.adapter = searchAdapter
         createApi()
-        flickrAPI.getListOfPhotosForQuery("675894853ae8ec6c242fa4c077bcf4a0", "dog").enqueue(queryCallback)
+        loadImagesForQuery("dog")
+    }
+
+    private fun loadImagesForQuery(query: String) {
+        searchAdapter.clearItems()
+        showProgressBar()
+        flickrAPI.getListOfPhotosForQuery("675894853ae8ec6c242fa4c077bcf4a0", query).enqueue(queryCallback)
     }
 
     private fun createApi() {
@@ -86,6 +107,27 @@ class SearchActivity : AppCompatActivity() {
         flickrAPI = retroFit.create(FlickrAPI::class.java)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the options menu from XML
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_search, menu)
+
+        // Get the SearchView and set the searchable configuration
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = menu.findItem(R.id.search).actionView as android.widget.SearchView
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        searchView.setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
+
+        return true
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        if (Intent.ACTION_SEARCH == intent?.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            loadImagesForQuery(query)
+        }
+    }
 
     private fun showImageDetails(url: String) {
         val dialog = Dialog(this)

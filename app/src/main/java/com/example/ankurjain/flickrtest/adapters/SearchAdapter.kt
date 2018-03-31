@@ -16,6 +16,11 @@ class SearchAdapter (private val interactionListener: SearchActivity.IItemCLickL
 
     private val items: MutableList<GalleryItem> = mutableListOf()
 
+    fun clearItems() {
+        items.clear()
+        notifyDataSetChanged()
+    }
+
     fun appendItems(newItems: List<GalleryItem>?) {
         if (newItems != null && newItems.isNotEmpty()) {
             items.addAll(newItems)

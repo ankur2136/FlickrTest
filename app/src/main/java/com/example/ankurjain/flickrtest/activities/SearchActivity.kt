@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.bumptech.glide.Glide
+import com.example.ankurjain.flickrtest.DbHelper
 import com.example.ankurjain.flickrtest.R
 import com.example.ankurjain.flickrtest.adapters.SearchAdapter
 import com.example.ankurjain.flickrtest.dto.GalleryItem
@@ -20,6 +21,7 @@ import com.example.ankurjain.flickrtest.dto.ResponseWrapper
 import com.example.ankurjain.flickrtest.network.FlickrAPI
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,6 +51,17 @@ class SearchActivity : AppCompatActivity() {
     private val queryCallback = object : Callback<ResponseWrapper> {
         override fun onFailure(call: Call<ResponseWrapper>?, t: Throwable?) {
             Log.d(TAG, "failed to call $call")
+            val query = (call?.request()?.tag() as Request).url().queryParameterValues("text")[0]
+            DbHelper.INSTANCE.getItemsForQuery(this@SearchActivity.applicationContext, query, object:IDbHelper{
+                override fun onOperationComplete(items: List<GalleryItem>) {
+                    searchAdapter.appendItems(items)
+                    hideProgressBar()
+                }
+
+                override fun onOperationFailed(exception: Exception) {
+                    hideProgressBar()
+                }
+            } )
             hideProgressBar()
         }
 
@@ -57,11 +70,20 @@ class SearchActivity : AppCompatActivity() {
             if (response != null) {
                 if (response.isSuccessful) {
                     val items = response.body()?.photos?.listPhotos
-                    val adapter = recyclerView.adapter as SearchAdapter
-                    adapter.appendItems(items)
+                    val query = (call?.request()?.tag() as Request).url().queryParameterValues("text")[0]
+                    searchAdapter.appendItems(items)
+                    if (items != null) {
+                        for (item in items) {
+                            DbHelper.INSTANCE.insertGalleryItemToDb(this@SearchActivity.applicationContext, item, query)
+                        }
+                    }
+                } else {
+                    onFailure(call, Throwable())
                 }
             }
         }
+
+
     }
 
     private val itemCLickListenerInteraction = object : IItemCLickListenerInteraction {
@@ -150,12 +172,6 @@ class SearchActivity : AppCompatActivity() {
         detailImageViewContainer.visibility = View.VISIBLE
     }
 
-
-    interface IItemCLickListenerInteraction {
-        fun onItemClick(url: String)
-        fun hideProgressBar()
-    }
-
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putParcelableArrayList(IMAGES, ArrayList(searchAdapter.getItems()))
@@ -179,5 +195,15 @@ class SearchActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    interface IItemCLickListenerInteraction {
+        fun onItemClick(url: String)
+        fun hideProgressBar()
+    }
+
+    interface IDbHelper{
+        fun onOperationComplete(items: List<GalleryItem>)
+        fun onOperationFailed(exception: Exception)
     }
 }

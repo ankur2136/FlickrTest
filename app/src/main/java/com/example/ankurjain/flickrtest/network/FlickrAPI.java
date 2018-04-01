@@ -1,6 +1,5 @@
 package com.example.ankurjain.flickrtest.network;
 
-import com.example.ankurjain.flickrtest.dto.GalleryItem;
 import com.example.ankurjain.flickrtest.dto.ResponseWrapper;
 
 import retrofit2.Call;

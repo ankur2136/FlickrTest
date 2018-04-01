@@ -8,7 +8,7 @@ import android.content.Context;
 import com.example.ankurjain.flickrtest.dto.GalleryItem;
 import com.example.ankurjain.flickrtest.dto.GalleryItemDao;
 
-@Database(entities = {GalleryItem.class}, version = 1)
+@Database(entities = {GalleryItem.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 

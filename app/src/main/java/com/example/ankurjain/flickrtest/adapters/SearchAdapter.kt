@@ -67,7 +67,6 @@ class SearchAdapter (private val interactionListener: SearchActivity.IItemCLickL
 
         fun bind(item: GalleryItem) {
             binding.viewModel?.setItem(item)
-            Glide.with(context).load(item.url).placeholder(R.drawable.ic_launcher_background).into(binding.photoView)
             binding.photoContainer.setOnClickListener { interactionListener.onItemClick(item.url) }
         }
     }

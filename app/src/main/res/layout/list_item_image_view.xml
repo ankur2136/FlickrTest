@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="glide"
+            type="com.bumptech.glide.Glide" />
 
         <variable
             name="viewModel"
@@ -38,7 +43,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="8dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"
+            app:imageUrl="@{viewModel.item.url}"
             tools:ignore="ContentDescription" />
 
         <include layout="@layout/divider" />

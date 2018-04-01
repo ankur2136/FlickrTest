@@ -22,23 +22,26 @@
             android:id="@+id/photo_owner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.item.owner}" />
+            android:text="@{viewModel.item.owner}"
+            android:visibility="@{viewModel.ownerVisibility}" />
 
         <TextView
             android:id="@+id/photo_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.item.title}" />
+            android:text="@{viewModel.item.title}"
+            android:visibility="@{viewModel.titleVisibility}" />
 
         <ImageView
             android:id="@+id/photo_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:layout_marginTop="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background"
             tools:ignore="ContentDescription" />
+
+        <include layout="@layout/divider" />
     </LinearLayout>
 
 </layout>

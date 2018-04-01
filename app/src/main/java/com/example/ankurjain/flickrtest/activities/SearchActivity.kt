@@ -177,7 +177,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showImageDetails(url: String) {
-        Glide.with(this).load(url).placeholder(R.drawable.ic_launcher_background).override(300, 300).into(detailImageView)
+        Glide.with(this).load(url).into(detailImageView)
         detailImageViewContainer.visibility = View.VISIBLE
     }
 

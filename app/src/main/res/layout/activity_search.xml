@@ -27,7 +27,7 @@
         android:id="@+id/detailed_image_view_container"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:background="#96000000"
+        android:background="@android:color/darker_gray"
         android:layout_height="match_parent">
 
         <ImageView

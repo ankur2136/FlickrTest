@@ -25,6 +25,14 @@ class SearchAdapter (private val interactionListener: SearchActivity.IItemCLickL
         return items
     }
 
+    fun replaceItems(newItems: List<GalleryItem>?) {
+        items.clear()
+        if (newItems != null)
+            items.addAll(newItems)
+        notifyDataSetChanged()
+        interactionListener.hideProgressBar()
+    }
+
     fun appendItems(newItems: List<GalleryItem>?) {
         if (newItems != null && newItems.isNotEmpty()) {
             items.addAll(newItems)

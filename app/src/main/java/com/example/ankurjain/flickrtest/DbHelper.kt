@@ -2,6 +2,7 @@ package com.example.ankurjain.flickrtest
 
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
+import android.util.Log
 import com.example.ankurjain.flickrtest.activities.SearchActivity
 import com.example.ankurjain.flickrtest.database.AppDatabase
 import com.example.ankurjain.flickrtest.dto.GalleryItem
@@ -39,6 +40,7 @@ class DbHelper {
                 val items = db.galleryDao().findByQuery(query)
                 interaction.onOperationComplete(items)
             } catch (e: Exception) {
+                Log.e("DbHelper", e.toString())
                 interaction.onOperationFailed(e)
             }
         }

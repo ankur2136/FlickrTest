@@ -4,6 +4,8 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -52,16 +54,15 @@ class SearchActivity : AppCompatActivity() {
         override fun onFailure(call: Call<ResponseWrapper>?, t: Throwable?) {
             Log.d(TAG, "failed to call $call")
             val query = (call?.request()?.tag() as Request).url().queryParameterValues("text")[0]
-            DbHelper.INSTANCE.getItemsForQuery(this@SearchActivity.applicationContext, query, object:IDbHelper{
+            DbHelper.INSTANCE.getItemsForQuery(this@SearchActivity.applicationContext, query, object : IDbHelper {
                 override fun onOperationComplete(items: List<GalleryItem>) {
-                    searchAdapter.appendItems(items)
-                    hideProgressBar()
+                    replaceItems(items)
                 }
 
                 override fun onOperationFailed(exception: Exception) {
                     hideProgressBar()
                 }
-            } )
+            })
             hideProgressBar()
         }
 
@@ -84,6 +85,13 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun replaceItems(items: List<GalleryItem>) {
+        Handler(Looper.getMainLooper()).post({
+            searchAdapter.replaceItems(items)
+            hideProgressBar()
+        })
     }
 
     private val itemCLickListenerInteraction = object : IItemCLickListenerInteraction {
@@ -129,6 +137,7 @@ class SearchActivity : AppCompatActivity() {
     private fun loadImagesForQuery(query: String) {
         lastQuery = query
         searchAdapter.clearItems()
+        recyclerView.removeAllViews()
         showProgressBar()
         flickrAPI.getListOfPhotosForQuery("675894853ae8ec6c242fa4c077bcf4a0", query).enqueue(queryCallback)
     }
@@ -183,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
         val items = savedInstanceState?.getParcelableArrayList<GalleryItem>(IMAGES)
         val lastQuery = savedInstanceState?.getString(LAST_QUERY_KEY) ?: DEFAULT_QUERY_STRING
         if (items != null && items.isNotEmpty()) {
-            searchAdapter.appendItems(items)
+            searchAdapter.replaceItems(items)
         } else {
             loadImagesForQuery(lastQuery)
         }
@@ -202,7 +211,7 @@ class SearchActivity : AppCompatActivity() {
         fun hideProgressBar()
     }
 
-    interface IDbHelper{
+    interface IDbHelper {
         fun onOperationComplete(items: List<GalleryItem>)
         fun onOperationFailed(exception: Exception)
     }

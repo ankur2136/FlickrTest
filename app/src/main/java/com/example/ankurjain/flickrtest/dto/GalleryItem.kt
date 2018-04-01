@@ -10,11 +10,13 @@ import com.google.gson.annotations.SerializedName
 @Entity(tableName = "gallery_item")
 data class GalleryItem(@PrimaryKey(autoGenerate = false) @SerializedName("id") val id: String,
                        @ColumnInfo(name = "url_s") @SerializedName("url_s") val url: String,
-                       @ColumnInfo(name = "owner") @SerializedName("owner") val owner: String?,
+                       @ColumnInfo(name = "owner") @SerializedName("owner") val owner: String,
+                       @ColumnInfo(name = "title") @SerializedName("title") val title: String,
                        @ColumnInfo(name = "width_s") @SerializedName("width_s") val width: Int?,
                        @ColumnInfo(name = "height_s") @SerializedName("height_s") val height: Int?,
                        @ColumnInfo(name = "query") var query: String?) : Parcelable {
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -26,6 +28,7 @@ data class GalleryItem(@PrimaryKey(autoGenerate = false) @SerializedName("id") v
         parcel.writeString(id)
         parcel.writeString(url)
         parcel.writeString(owner)
+        parcel.writeString(title)
         parcel.writeValue(width)
         parcel.writeValue(height)
         parcel.writeString(query)

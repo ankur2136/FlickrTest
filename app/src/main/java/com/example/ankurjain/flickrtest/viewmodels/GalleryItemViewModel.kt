@@ -1,18 +1,19 @@
 package com.example.ankurjain.flickrtest.viewmodels
 
 import android.databinding.BaseObservable
+import com.example.ankurjain.flickrtest.dto.GalleryItem
 
 open class GalleryItemViewModel : BaseObservable() {
 
-    private var mUrl: String? = ""
+    private var mItem: GalleryItem? = null
 
-    fun setUrl(text: String) {
-        mUrl = text
+    fun setItem(item: GalleryItem) {
+        mItem = item
         notifyChange()
     }
 
-    fun getUrl(): String? {
-        return mUrl
+    fun getItem(): GalleryItem? {
+        return mItem
     }
 
 }
